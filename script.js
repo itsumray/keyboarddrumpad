@@ -1,19 +1,15 @@
 const defaultSounds = {
-    'Q': 'sounds/kick.wav',
-    'W': 'sounds/snare.wav',
-    'E': 'sounds/hihat-closed.wav',
-    'R': 'sounds/hihat-open.wav',
-    'A': 'sounds/tom1.wav',
-    'S': 'sounds/tom2.wav',
-    'D': 'sounds/tom3.wav',
-    'F': 'sounds/crash.wav',
-    'Z': 'sounds/ride.wav',
-    'X': 'sounds/cowbell.wav',
-    'C': 'sounds/clap.wav',
-    'V': 'sounds/percussion.wav'
+    'Q': 'sounds/kick.wav',  'W': 'sounds/snare.wav',  'E': 'sounds/hihat-closed.wav',
+    'R': 'sounds/hihat-open.wav',  'T': 'sounds/tom1.wav',  'Y': 'sounds/tom2.wav',
+    'A': 'sounds/tom3.wav',  'S': 'sounds/crash.wav',  'D': 'sounds/ride.wav',
+    'F': 'sounds/cowbell.wav',  'G': 'sounds/clap.wav',  'H': 'sounds/percussion.wav',
+    'Z': 'sounds/bass.wav',  'X': 'sounds/conga.wav',  'C': 'sounds/shaker.wav',
+    'V': 'sounds/triangle.wav',  'B': 'sounds/snap.wav',  'N': 'sounds/woodblock.wav',
+    '1': 'sounds/synth1.wav',  '2': 'sounds/synth2.wav',  '3': 'sounds/synth3.wav',
+    '4': 'sounds/synth4.wav',  '5': 'sounds/synth5.wav',  '6': 'sounds/synth6.wav'
 };
 
-// Load keybinds from local storage or use defaults
+// Load keybinds from storage or use default
 let keyBindings = JSON.parse(localStorage.getItem("keyBindings")) || { ...defaultSounds };
 
 const padContainer = document.getElementById("padContainer");
@@ -23,14 +19,14 @@ let waitingForKey = null;
 // Create drum pads
 Object.keys(keyBindings).forEach(key => createPad(key, keyBindings[key]));
 
-// Play sound function
+// Function to play sound
 function playSound(key) {
-    if (keyBindings[key]) {
-        const audio = new Audio(keyBindings[key]);
+    let soundPath = keyBindings[key];
+    if (soundPath) {
+        let audio = new Audio(soundPath);
         audio.play();
-        
-        // Highlight pad
-        const pad = document.querySelector(`.pad[data-key="${key}"]`);
+
+        let pad = document.querySelector(`.pad[data-key="${key}"]`);
         if (pad) {
             pad.classList.add("active");
             setTimeout(() => pad.classList.remove("active"), 100);
@@ -43,9 +39,9 @@ document.addEventListener("keydown", (event) => {
     playSound(event.key.toUpperCase());
 });
 
-// Create a drum pad
+// Function to create a drum pad
 function createPad(key, sound) {
-    const pad = document.createElement("div");
+    let pad = document.createElement("div");
     pad.classList.add("pad");
     pad.innerText = key;
     pad.dataset.key = key;
@@ -53,10 +49,10 @@ function createPad(key, sound) {
     padContainer.appendChild(pad);
 }
 
-// Reassign key function
+// Change keybind function
 function reassignKey(pad) {
     waitingForKey = pad;
-    pad.innerText = "Press Key";
+    pad.innerText = "Press Key...";
 }
 
 // Listen for new key assignment
@@ -69,17 +65,17 @@ document.addEventListener("keydown", (event) => {
         keyBindings[newKey] = keyBindings[oldKey];
         delete keyBindings[oldKey];
 
-        // Save to local storage
+        // Save new bindings
         localStorage.setItem("keyBindings", JSON.stringify(keyBindings));
 
-        // Update pad
+        // Update pad UI
         waitingForKey.innerText = newKey;
         waitingForKey.dataset.key = newKey;
         waitingForKey = null;
     }
 });
 
-// Reset to default keybindings
+// Reset keybindings
 resetBtn.addEventListener("click", () => {
     localStorage.removeItem("keyBindings");
     location.reload();
