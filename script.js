@@ -46,6 +46,17 @@ function playSound(key) {
     }
 }
 
+// Update the key-sound info
+function updateKeyInfo() {
+    const keyInfoList = document.getElementById('keyInfoList');
+    keyInfoList.innerHTML = '';  // Clear current list
+    for (let key in keyBindings) {
+        let listItem = document.createElement('li');
+        listItem.textContent = `${key}: ${keyBindings[key]}`;
+        keyInfoList.appendChild(listItem);
+    }
+}
+
 // Play sound when key is pressed
 document.addEventListener("keydown", (event) => {
     playSound(event.key.toUpperCase());
@@ -102,5 +113,6 @@ resetBtn.addEventListener("click", () => {
     location.reload();
 });
 
-// Create pads
+// Create pads and update sound info
 Object.keys(keyBindings).forEach(key => createPad(key, keyBindings[key]));
+updateKeyInfo();
