@@ -1,10 +1,16 @@
 const sounds = {
     'Q': 'sounds/kick.wav',
     'W': 'sounds/snare.wav',
-    'E': 'sounds/hihat.wav',
+    'E': 'sounds/hihat-closed.wav',
+    'R': 'sounds/hihat-open.wav',
     'A': 'sounds/tom1.wav',
     'S': 'sounds/tom2.wav',
-    'D': 'sounds/cymbal.wav'
+    'D': 'sounds/tom3.wav',
+    'F': 'sounds/crash.wav',
+    'Z': 'sounds/ride.wav',
+    'X': 'sounds/cowbell.wav',
+    'C': 'sounds/clap.wav',
+    'V': 'sounds/percussion.wav'
 };
 
 const padContainer = document.getElementById("padContainer");
@@ -33,7 +39,6 @@ Object.keys(sounds).forEach(key => {
 function playSound(key) {
     if (sounds[key]) {
         const audio = new Audio(sounds[key]);
-        audio.currentTime = 0;
         audio.play();
         
         // Add to recording if recording is active
@@ -88,23 +93,4 @@ exportBtn.addEventListener("click", () => {
 });
 
 // Metronome logic
-function startMetronomeFunc() {
-    const bpm = parseInt(bpmInput.value);
-    if (!bpm || bpm < 40 || bpm > 240) return;
-
-    const interval = 60000 / bpm;
-    if (metronomeInterval) clearInterval(metronomeInterval);
-
-    metronomeInterval = setInterval(() => {
-        const metronomeSound = new Audio("sounds/metronome.wav");
-        metronomeSound.play();
-    }, interval);
-}
-
-function stopMetronomeFunc() {
-    if (metronomeInterval) clearInterval(metronomeInterval);
-    metronomeInterval = null;
-}
-
-startMetronome.addEventListener("click", startMetronomeFunc);
-stopMetronome.addEventListener("click", stopMetronomeFunc);
+function
