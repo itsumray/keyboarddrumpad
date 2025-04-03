@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Drum Pad</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Keyboard Drum Pad</h1>
+        <div class="controls">
+            <button id="recordBtn">Record</button>
+            <button id="playBtn">Play</button>
+            <button id="exportBtn">Export</button>
+            <label>Metronome: <input type="number" id="bpm" value="120" min="40" max="240"> BPM</label>
+            <button id="startMetronome">Start</button>
+            <button id="stopMetronome">Stop</button>
+        </div>
+        <div class="drum-pad" id="padContainer"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
