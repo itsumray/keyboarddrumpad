@@ -8,16 +8,16 @@
 </head>
 <body>
     <h1>Keyboard Drum Pad</h1>
-    <p>Click a pad to change its keybind</p>
-    <button id="resetKeys">Reset Keybinds</button>
+    <p>Click a key or tap a pad to play a sound!</p>
     
-    <!-- Displaying sound for each keybind -->
-    <div id="soundInfo">
-        <p>Key Bindings:</p>
-        <ul id="keyInfoList"></ul>
+    <div id="padContainer">
+        <!-- Buttons will be dynamically generated here -->
     </div>
-
-    <div id="padContainer" class="drum-pad"></div>
-
+    
+    <p id="keyInfo">Use the default key bindings (Q, W, E, etc.) to play drums.</p>
+    
+    <button id="resetKeys">Reset Key Bindings</button>
+    
     <script src="script.js"></script>
-</
+</body>
+</html>
