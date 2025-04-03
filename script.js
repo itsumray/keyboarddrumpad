@@ -1,30 +1,42 @@
 const defaultSounds = {
     'Q': 'sounds/kick.wav',  'W': 'sounds/snare.wav',  'E': 'sounds/hihat-closed.wav',
-    'R': 'sounds/hihat-open.wav',  'T': 'sounds/tom1.wav',  'Y': 'sounds/tom2.wav',
-    'A': 'sounds/tom3.wav',  'S': 'sounds/crash.wav',  'D': 'sounds/ride.wav',
-    'F': 'sounds/cowbell.wav',  'G': 'sounds/clap.wav',  'H': 'sounds/percussion.wav',
-    'Z': 'sounds/bass.wav',  'X': 'sounds/conga.wav',  'C': 'sounds/shaker.wav',
-    'V': 'sounds/triangle.wav',  'B': 'sounds/snap.wav',  'N': 'sounds/woodblock.wav',
-    '1': 'sounds/synth1.wav',  '2': 'sounds/synth2.wav',  '3': 'sounds/synth3.wav',
-    '4': 'sounds/synth4.wav',  '5': 'sounds/synth5.wav',  '6': 'sounds/synth6.wav'
+    'R': 'sounds/hihat-open.wav',  'A': 'sounds/tom1.wav',  'S': 'sounds/tom2.wav',
+    'D': 'sounds/tom3.wav',  'F': 'sounds/crash.wav',  'Z': 'sounds/ride.wav',
+    'X': 'sounds/cowbell.wav',  'C': 'sounds/clap.wav',  'V': 'sounds/percussion.wav'
 };
 
 // Load keybinds from storage or use default
 let keyBindings = JSON.parse(localStorage.getItem("keyBindings")) || { ...defaultSounds };
 
-const padContainer = document.getElementById("padContainer");
-const resetBtn = document.getElementById("resetKeys");
-let waitingForKey = null;
+// Web Audio API to fix iOS sound issues
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let unlocked = false;
 
-// Create drum pads
-Object.keys(keyBindings).forEach(key => createPad(key, keyBindings[key]));
+// Unlock audio context on first touch
+function unlockAudio() {
+    if (!unlocked) {
+        const buffer = audioContext.createBuffer(1, 1, 22050);
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+        unlocked = true;
+    }
+}
 
-// Function to play sound
+// Play sound function (iOS Fix)
 function playSound(key) {
     let soundPath = keyBindings[key];
     if (soundPath) {
-        let audio = new Audio(soundPath);
-        audio.play();
+        fetch(soundPath)
+            .then(response => response.arrayBuffer())
+            .then(data => audioContext.decodeAudioData(data))
+            .then(buffer => {
+                const source = audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.connect(audioContext.destination);
+                source.start(0);
+            });
 
         let pad = document.querySelector(`.pad[data-key="${key}"]`);
         if (pad) {
@@ -39,17 +51,29 @@ document.addEventListener("keydown", (event) => {
     playSound(event.key.toUpperCase());
 });
 
-// Function to create a drum pad
+// Play sound when clicking a pad
+document.addEventListener("click", unlockAudio); // Unlock sound for iOS
+document.addEventListener("touchstart", unlockAudio); // Fix for iPhones/iPads
+
+const padContainer = document.getElementById("padContainer");
+const resetBtn = document.getElementById("resetKeys");
+let waitingForKey = null;
+
+// Create a drum pad
 function createPad(key, sound) {
     let pad = document.createElement("div");
     pad.classList.add("pad");
     pad.innerText = key;
     pad.dataset.key = key;
-    pad.addEventListener("click", () => reassignKey(pad));
+    pad.addEventListener("click", () => {
+        unlockAudio();
+        playSound(key);
+        reassignKey(pad);
+    });
     padContainer.appendChild(pad);
 }
 
-// Change keybind function
+// Reassign key function
 function reassignKey(pad) {
     waitingForKey = pad;
     pad.innerText = "Press Key...";
@@ -61,14 +85,11 @@ document.addEventListener("keydown", (event) => {
         let newKey = event.key.toUpperCase();
         let oldKey = waitingForKey.dataset.key;
 
-        // Update keyBindings
         keyBindings[newKey] = keyBindings[oldKey];
         delete keyBindings[oldKey];
 
-        // Save new bindings
         localStorage.setItem("keyBindings", JSON.stringify(keyBindings));
 
-        // Update pad UI
         waitingForKey.innerText = newKey;
         waitingForKey.dataset.key = newKey;
         waitingForKey = null;
@@ -80,3 +101,6 @@ resetBtn.addEventListener("click", () => {
     localStorage.removeItem("keyBindings");
     location.reload();
 });
+
+// Create pads
+Object.keys(keyBindings).forEach(key => createPad(key, keyBindings[key]));
