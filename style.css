@@ -5,38 +5,36 @@ body {
     color: white;
 }
 
-.container {
-    margin: 20px;
-}
-
-.controls button {
-    margin: 5px;
+button {
     padding: 10px;
-    border: none;
+    margin: 10px;
     cursor: pointer;
-    background-color: #333;
+    border: none;
+    background-color: #f39c12;
     color: white;
     border-radius: 5px;
 }
 
 .drum-pad {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 10px;
-    margin-top: 20px;
     justify-content: center;
+    margin: 20px auto;
+    max-width: 600px;
 }
 
 .pad {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     background-color: #555;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
+    user-select: none;
 }
 
 .pad.active {
